@@ -225,7 +225,7 @@ export async function generateAppointmentLetterDocx(fields: {
 
   const body: Paragraph[] = [
     // Sender address block
-    pS([bS("Skoder Technologies")]),
+    pS([bS("Campus365")]),
     pS([tS("ICT Tower: E-14/X, Agargaon, Dhaka 1207")]),
     
     // Date
@@ -247,7 +247,7 @@ export async function generateAppointmentLetterDocx(fields: {
       tS("We are pleased to inform you that you have been appointed as a "),
       bS(fields.position),
       tS(" at "),
-      bS("Skoder Technologies"),
+      bS("Campus365"),
       tS(", effective "),
       bS(fmt(fields.startDate, "[Start Date]")),
       tS(" to "),
@@ -271,7 +271,7 @@ export async function generateAppointmentLetterDocx(fields: {
     // Body paragraph 3
     pS([
       tS("All materials, data, and information accessed during the internship remain the property of "),
-      bS("Skoder Technologies"),
+      bS("Campus365"),
       tS(", and must not be disclosed to any third party."),
     ], AlignmentType.JUSTIFIED),
     
@@ -285,7 +285,7 @@ export async function generateAppointmentLetterDocx(fields: {
     // Body paragraph 5
     pS([
       tS("We welcome you to "),
-      bS("Skoder Technologies"),
+      bS("Campus365"),
       tS(" and look forward to your valuable contributions."),
     ], AlignmentType.JUSTIFIED),
     
@@ -293,7 +293,7 @@ export async function generateAppointmentLetterDocx(fields: {
     pS([tS("Warm regards,")]),
     
     // Signatory block
-    pS([bS("For Skoder Technologies")]),
+    pS([bS("For Campus365")]),
     pS([tS("Authorized Signatory:")]),
     
     new Paragraph({

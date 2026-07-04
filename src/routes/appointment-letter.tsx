@@ -220,7 +220,7 @@ function AppointmentLetterPage() {
                   <div className="flex-1">
             {/* Date & recipient */}
             <section className="mb-6 text-sm leading-relaxed">
-              <p className="font-semibold">Skoder Technologies</p>
+              <p className="font-semibold">Campus365</p>
               <p>ICT Tower: E-14/X, Agargaon, Dhaka 1207</p>
               <p className="mt-2">
                 <span className="font-semibold">Date:</span>{" "}
@@ -242,7 +242,7 @@ function AppointmentLetterPage() {
               <p>
                 We are pleased to inform you that you have been appointed as a{" "}
                 <span className="font-semibold">{fields.position}</span> at{" "}
-                <span className="font-semibold">Skoder Technologies</span>, effective{" "}
+                <span className="font-semibold">Campus365</span>, effective{" "}
                 <span className="font-semibold">{formatDateStr(fields.startDate, "[Start Date]")}</span> to{" "}
                 <span className="font-semibold">{formatDateStr(fields.endDate, "[End Date]")}</span>.
               </p>
@@ -254,21 +254,21 @@ function AppointmentLetterPage() {
               </p>
               <p>
                 All materials, data, and information accessed during the internship remain the property of{" "}
-                <span className="font-semibold">Skoder Technologies</span>, and must not be disclosed to any third party.
+                <span className="font-semibold">Campus365</span>, and must not be disclosed to any third party.
               </p>
               <p>
                 Upon successful completion of the internship, you will be awarded an{" "}
                 <span className="font-semibold">Internship Completion Certificate</span>.
               </p>
               <p>
-                We welcome you to <span className="font-semibold">Skoder Technologies</span> and look forward to your valuable contributions.
+                We welcome you to <span className="font-semibold">Campus365</span> and look forward to your valuable contributions.
               </p>
               <p>Warm regards,</p>
             </section>
 
             {/* Signatory */}
             <div className="mt-10 text-sm">
-              <p className="font-semibold">For Skoder Technologies</p>
+              <p className="font-semibold">For Campus365</p>
               <p className="mt-6">Authorized Signatory:</p>
               <p className="mt-8">
                 <span className="font-semibold">Name:</span> {fields.signatoryName}
