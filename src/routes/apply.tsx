@@ -20,8 +20,19 @@ function ApplyPage() {
     name: "",
     email: "",
     phone: "",
+    address: "",
+    fathers_name: "",
+    mothers_name: "",
     institution: "",
+    department: "",
+    student_roll: "",
+    id_type: "NID",
+    id_number: "",
   });
+
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [signature, setSignature] = useState<File | null>(null);
+  const [cv, setCv] = useState<File | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,12 +45,30 @@ function ApplyPage() {
     setError(null);
 
     try {
+      if (!photo || !signature || !cv) {
+        throw new Error("Please upload all required files (Photo, Signature, CV).");
+      }
+
+      const uploadFile = async (file: File, folder: string) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+        const filePath = `${folder}/${fileName}`;
+        const { error } = await supabase.storage.from('applicant-files').upload(filePath, file);
+        if (error) throw error;
+        const { data: publicData } = supabase.storage.from('applicant-files').getPublicUrl(filePath);
+        return publicData.publicUrl;
+      };
+
+      const photo_url = await uploadFile(photo, "photos");
+      const signature_url = await uploadFile(signature, "signatures");
+      const cv_url = await uploadFile(cv, "cvs");
+
       const { error: insertError } = await supabase.from("applications").insert([
         {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          institution: formData.institution,
+          ...formData,
+          photo_url,
+          signature_url,
+          cv_url,
         },
       ]);
 
@@ -156,6 +185,143 @@ function ApplyPage() {
               onChange={handleChange}
               className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-purple-500"
             />
+          </div>
+
+          <div className="space-y-2 text-left">
+            <Label htmlFor="department" className="text-white/80">Department</Label>
+            <Input
+              id="department"
+              name="department"
+              placeholder="e.g. Computer Science and Engineering"
+              required
+              value={formData.department}
+              onChange={handleChange}
+              className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-purple-500"
+            />
+          </div>
+
+          <div className="space-y-2 text-left">
+            <Label htmlFor="student_roll" className="text-white/80">Student Roll / ID</Label>
+            <Input
+              id="student_roll"
+              name="student_roll"
+              placeholder="e.g. 20-12345-1"
+              required
+              value={formData.student_roll}
+              onChange={handleChange}
+              className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-purple-500"
+            />
+          </div>
+
+          <div className="space-y-2 text-left">
+            <Label htmlFor="fathers_name" className="text-white/80">Father's Name</Label>
+            <Input
+              id="fathers_name"
+              name="fathers_name"
+              placeholder="Father's Full Name"
+              required
+              value={formData.fathers_name}
+              onChange={handleChange}
+              className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-purple-500"
+            />
+          </div>
+
+          <div className="space-y-2 text-left">
+            <Label htmlFor="mothers_name" className="text-white/80">Mother's Name</Label>
+            <Input
+              id="mothers_name"
+              name="mothers_name"
+              placeholder="Mother's Full Name"
+              required
+              value={formData.mothers_name}
+              onChange={handleChange}
+              className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-purple-500"
+            />
+          </div>
+
+          <div className="space-y-2 text-left">
+            <Label htmlFor="address" className="text-white/80">Full Address</Label>
+            <Input
+              id="address"
+              name="address"
+              placeholder="House, Street, Area, City"
+              required
+              value={formData.address}
+              onChange={handleChange}
+              className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-purple-500"
+            />
+          </div>
+
+          <div className="space-y-2 text-left border border-white/10 p-4 rounded-lg bg-white/5">
+            <Label className="text-white/80 mb-2 block">National ID / Birth Certificate</Label>
+            <div className="flex gap-4 mb-3">
+              <label className="flex items-center gap-2 text-sm text-white/80 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="id_type" 
+                  value="NID" 
+                  checked={formData.id_type === "NID"} 
+                  onChange={handleChange}
+                  className="accent-purple-500"
+                /> NID
+              </label>
+              <label className="flex items-center gap-2 text-sm text-white/80 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="id_type" 
+                  value="Birth Certificate" 
+                  checked={formData.id_type === "Birth Certificate"} 
+                  onChange={handleChange}
+                  className="accent-purple-500"
+                /> Birth Certificate
+              </label>
+            </div>
+            <Input
+              id="id_number"
+              name="id_number"
+              placeholder={`Enter ${formData.id_type} Number`}
+              required
+              value={formData.id_number}
+              onChange={handleChange}
+              className="bg-black/20 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-purple-500"
+            />
+          </div>
+
+          <div className="space-y-4 text-left border border-white/10 p-4 rounded-lg bg-white/5 mt-4">
+            <h3 className="text-sm font-semibold text-white/90 border-b border-white/10 pb-2">Required Documents</h3>
+            
+            <div className="space-y-2">
+              <Label className="text-white/80 text-xs">Recent Passport Size Photo (Image)</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                required
+                onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+                className="bg-black/20 border-white/10 text-white/70 file:text-white file:bg-white/10 file:border-0 file:mr-4 file:px-3 file:py-1 file:rounded-md cursor-pointer"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-white/80 text-xs">Digital Signature (Image)</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                required
+                onChange={(e) => setSignature(e.target.files?.[0] || null)}
+                className="bg-black/20 border-white/10 text-white/70 file:text-white file:bg-white/10 file:border-0 file:mr-4 file:px-3 file:py-1 file:rounded-md cursor-pointer"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-white/80 text-xs">Resume / CV (PDF)</Label>
+              <Input
+                type="file"
+                accept=".pdf"
+                required
+                onChange={(e) => setCv(e.target.files?.[0] || null)}
+                className="bg-black/20 border-white/10 text-white/70 file:text-white file:bg-white/10 file:border-0 file:mr-4 file:px-3 file:py-1 file:rounded-md cursor-pointer"
+              />
+            </div>
           </div>
 
           {error && <div className="rounded-md bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">{error}</div>}

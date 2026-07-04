@@ -4,7 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
-import { Lock, Upload, Image as ImageIcon, Loader2, LogOut, LayoutTemplate, Save } from "lucide-react";
+import { Lock, Upload, Image as ImageIcon, Loader2, LogOut, LayoutTemplate, Save, Eye } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
@@ -36,6 +44,8 @@ function AdminPage() {
   const [applications, setApplications] = useState<any[]>([]);
   const [isLoadingApps, setIsLoadingApps] = useState(false);
   const [activeTab, setActiveTab] = useState<"applications" | "assets" | "landing">("applications");
+  const [selectedApp, setSelectedApp] = useState<any>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -231,6 +241,16 @@ function AdminPage() {
                             <div className="flex gap-2 justify-end">
                             <Button 
                               size="sm" 
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedApp(app);
+                                setIsDetailsOpen(true);
+                              }}
+                            >
+                              <Eye className="mr-2 h-4 w-4" /> View
+                            </Button>
+                            <Button 
+                              size="sm" 
                               variant="secondary"
                               onClick={() => {
                                 window.location.href = `/appointment-letter?name=${encodeURIComponent(app.name)}&institution=${encodeURIComponent(app.institution)}`;
@@ -256,6 +276,94 @@ function AdminPage() {
                 </table>
               </div>
             </div>
+
+            <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+              <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Applicant Details</DialogTitle>
+                  <DialogDescription>
+                    Review the complete internship application for {selectedApp?.name}.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                {selectedApp && (
+                  <div className="space-y-6 mt-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Full Name</h4>
+                        <p>{selectedApp.name}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Email</h4>
+                        <p>{selectedApp.email}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Phone Number</h4>
+                        <p>{selectedApp.phone}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Full Address</h4>
+                        <p>{selectedApp.address || "N/A"}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Father's Name</h4>
+                        <p>{selectedApp.fathers_name || "N/A"}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Mother's Name</h4>
+                        <p>{selectedApp.mothers_name || "N/A"}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Institution</h4>
+                        <p>{selectedApp.institution}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Department</h4>
+                        <p>{selectedApp.department || "N/A"}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">Student Roll / ID</h4>
+                        <p>{selectedApp.student_roll || "N/A"}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground">{selectedApp.id_type || "NID / Birth Certificate"}</h4>
+                        <p>{selectedApp.id_number || "N/A"}</p>
+                      </div>
+                    </div>
+
+                    <div className="border-t pt-4">
+                      <h3 className="text-lg font-semibold mb-4">Uploaded Documents</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {selectedApp.photo_url && (
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-medium text-muted-foreground">Photo</h4>
+                            <img src={selectedApp.photo_url} alt="Applicant Photo" className="w-40 h-40 object-cover rounded-md border" />
+                          </div>
+                        )}
+                        {selectedApp.signature_url && (
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-medium text-muted-foreground">Signature</h4>
+                            <img src={selectedApp.signature_url} alt="Applicant Signature" className="w-full max-w-xs h-24 object-contain rounded-md border p-2 bg-white" />
+                          </div>
+                        )}
+                      </div>
+                      
+                      {selectedApp.cv_url && (
+                        <div className="mt-6">
+                          <h4 className="text-sm font-medium text-muted-foreground mb-2">Resume / CV</h4>
+                          <Button asChild variant="outline">
+                            <a href={selectedApp.cv_url} target="_blank" rel="noreferrer">
+                              <Upload className="mr-2 h-4 w-4 rotate-180" /> View CV PDF
+                            </a>
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+
           </div>
         )}
       </div>
