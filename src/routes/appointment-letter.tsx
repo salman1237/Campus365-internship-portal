@@ -56,6 +56,9 @@ const initialState = {
     "assist with assigned projects, maintain confidentiality, and comply with company policies and professional standards",
   signatoryName: "[Authorized Signatory Name]",
   signatoryDesignation: "[Designation]",
+  signatoryImage: "",
+  companySealImage: "",
+  stationeryImage: "",
 };
 
 function formatDateStr(dateStr: string, fallback: string) {
@@ -153,6 +156,9 @@ function AppointmentLetterPage() {
           <Separator className="my-4" />
           <Field label="Signatory name" value={fields.signatoryName} onChange={(v) => updateField("signatoryName", v)} />
           <Field label="Signatory designation" value={fields.signatoryDesignation} onChange={(v) => updateField("signatoryDesignation", v)} />
+          <FileField label="Upload Signatory Image" onChange={(v) => updateField("signatoryImage", v)} />
+          <FileField label="Upload Company Seal" onChange={(v) => updateField("companySealImage", v)} />
+          <FileField label="Upload Stationery/Logo" onChange={(v) => updateField("stationeryImage", v)} />
         </div>
 
         <div className="mt-8 flex flex-col gap-2">
@@ -189,12 +195,16 @@ function AppointmentLetterPage() {
                   {/* Letterhead */}
                   <header className="mb-8 border-b border-dashed border-foreground/30 pb-4">
             <div className="flex items-start justify-between gap-6">
-              <DynamicLogo
-                logoKey="campus365-logo.png"
-                fallbackSrc={campusLogo}
-                alt="Campus365 — Digital Space for Universities"
-                className="h-16 w-auto object-contain"
-              />
+              {fields.stationeryImage ? (
+                <img src={fields.stationeryImage} alt="Stationery" className="h-16 w-auto object-contain" />
+              ) : (
+                <DynamicLogo
+                  logoKey="campus365-logo.png"
+                  fallbackSrc={campusLogo}
+                  alt="Campus365 — Digital Space for Universities"
+                  className="h-16 w-auto object-contain"
+                />
+              )}
               <div className="text-right">
                 <h1 className="text-3xl font-semibold tracking-tight" style={{ color: "#6b2fa8" }}>
                   Campus365
@@ -267,15 +277,27 @@ function AppointmentLetterPage() {
             </section>
 
             {/* Signatory */}
-            <div className="mt-10 text-sm">
-              <p className="font-semibold">For Campus365</p>
-              <p className="mt-6">Authorized Signatory:</p>
-              <p className="mt-8">
-                <span className="font-semibold">Name:</span> {fields.signatoryName}
-              </p>
-              <p>
-                <span className="font-semibold">Designation:</span> {fields.signatoryDesignation}
-              </p>
+            <div className="mt-10 text-sm flex justify-between items-end">
+              <div>
+                <p className="font-semibold">For Campus365</p>
+                <p className="mt-6">Authorized Signatory:</p>
+                {fields.signatoryImage && (
+                  <img src={fields.signatoryImage} alt="Signature" className="mt-2 h-16 w-auto object-contain" />
+                )}
+                <p className={fields.signatoryImage ? "mt-2" : "mt-8"}>
+                  <span className="font-semibold">Name:</span> {fields.signatoryName}
+                </p>
+                <p>
+                  <span className="font-semibold">Designation:</span> {fields.signatoryDesignation}
+                </p>
+              </div>
+
+              {/* Company Seal */}
+              <div className="mr-8 flex flex-col items-center justify-center">
+                {fields.companySealImage && (
+                  <img src={fields.companySealImage} alt="Company Seal" className="h-28 w-28 object-contain mix-blend-multiply opacity-90" />
+                )}
+              </div>
             </div>
                   </div>
                 </td>
@@ -336,6 +358,35 @@ function Field({
     <div>
       <Label className="mb-1.5 block text-sm">{label}</Label>
       <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+function FileField({
+  label,
+  onChange,
+  accept = "image/*",
+}: {
+  label: string;
+  onChange: (value: string) => void;
+  accept?: string;
+}) {
+  return (
+    <div>
+      <Label className="mb-1.5 block text-sm">{label}</Label>
+      <Input
+        type="file"
+        accept={accept}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            onChange(URL.createObjectURL(file));
+          } else {
+            onChange("");
+          }
+        }}
+        className="cursor-pointer file:cursor-pointer"
+      />
     </div>
   );
 }

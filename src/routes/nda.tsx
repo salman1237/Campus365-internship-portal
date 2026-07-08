@@ -40,6 +40,9 @@ const initialState = {
   internName: "[Intern Name]",
   internAddress: "[Intern Address]",
   companySignatoryTitle: "[Designation]",
+  signatoryImage: "",
+  companySealImage: "",
+  stationeryImage: "",
 };
 
 function formatDateStr(dateStr: string, fallback: string) {
@@ -131,6 +134,9 @@ function NDAPage() {
           <Field label="Intern address" value={fields.internAddress} onChange={(v) => updateField("internAddress", v)} />
           <Separator className="my-4" />
           <Field label="Signatory title" value={fields.companySignatoryTitle} onChange={(v) => updateField("companySignatoryTitle", v)} />
+          <FileField label="Upload Signatory Image" onChange={(v) => updateField("signatoryImage", v)} />
+          <FileField label="Upload Company Seal" onChange={(v) => updateField("companySealImage", v)} />
+          <FileField label="Upload Stationery/Logo" onChange={(v) => updateField("stationeryImage", v)} />
         </div>
 
         <div className="mt-8 flex flex-col gap-2">
@@ -205,12 +211,16 @@ function NDAPage() {
                   {/* Letterhead */}
                   <header className="mb-8 border-b border-dashed border-foreground/30 pb-4">
                     <div className="flex items-start justify-between gap-6">
-                      <DynamicLogo
-                        logoKey="campus365-logo.png"
-                        fallbackSrc={campusLogo}
-                        alt="Campus365 — Digital Space for Universities"
-                        className="h-16 w-auto object-contain"
-                      />
+                      {fields.stationeryImage ? (
+                        <img src={fields.stationeryImage} alt="Stationery" className="h-16 w-auto object-contain" />
+                      ) : (
+                        <DynamicLogo
+                          logoKey="campus365-logo.png"
+                          fallbackSrc={campusLogo}
+                          alt="Campus365 — Digital Space for Universities"
+                          className="h-16 w-auto object-contain"
+                        />
+                      )}
                       <div className="text-right">
                         <h1 className="text-3xl font-semibold tracking-tight" style={{ color: "#6b2fa8" }}>
                           Campus365
@@ -293,22 +303,35 @@ function NDAPage() {
 
                     <h3>Signatures</h3>
                     
-                    <div className="mt-4">
-                      <p className="mb-4">
-                        <strong>For the Company:</strong> By: <span className="signature-line"></span>
-                      </p>
-                      <p className="mb-8">
-                        Title: <span className="signature-line">{fields.companySignatoryTitle !== "[Designation]" ? fields.companySignatoryTitle : ""}</span> 
-                        <span className="ml-4">Date:</span> <span className="signature-line">{fields.date ? formatDateStr(fields.date, "") : ""}</span>
-                      </p>
-                      
-                      <p className="mb-4">
-                        <strong>The Intern:</strong> By: <span className="signature-line"></span>
-                      </p>
-                      <p className="mb-8">
-                        Name: <span className="signature-line">{fields.internName !== "[Intern Name]" ? fields.internName : ""}</span> 
-                        <span className="ml-4">Date:</span> <span className="signature-line">{fields.date ? formatDateStr(fields.date, "") : ""}</span>
-                      </p>
+                    <div className="mt-4 flex justify-between items-end">
+                      <div className="flex-1">
+                        <p className="mb-4">
+                          <strong>For the Company:</strong> By: {fields.signatoryImage ? (
+                            <img src={fields.signatoryImage} alt="Signature" className="inline-block h-12 w-auto ml-2 align-bottom" />
+                          ) : (
+                            <span className="signature-line"></span>
+                          )}
+                        </p>
+                        <p className="mb-8">
+                          Title: <span className="signature-line">{fields.companySignatoryTitle !== "[Designation]" ? fields.companySignatoryTitle : ""}</span> 
+                          <span className="ml-4">Date:</span> <span className="signature-line">{fields.date ? formatDateStr(fields.date, "") : ""}</span>
+                        </p>
+                        
+                        <p className="mb-4">
+                          <strong>The Intern:</strong> By: <span className="signature-line"></span>
+                        </p>
+                        <p className="mb-8">
+                          Name: <span className="signature-line">{fields.internName !== "[Intern Name]" ? fields.internName : ""}</span> 
+                          <span className="ml-4">Date:</span> <span className="signature-line">{fields.date ? formatDateStr(fields.date, "") : ""}</span>
+                        </p>
+                      </div>
+
+                      {/* Company Seal */}
+                      <div className="mr-8 mb-8 flex flex-col items-center justify-center">
+                        {fields.companySealImage && (
+                          <img src={fields.companySealImage} alt="Company Seal" className="h-28 w-28 object-contain mix-blend-multiply opacity-90" />
+                        )}
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -369,6 +392,35 @@ function Field({
     <div>
       <Label className="mb-1.5 block text-sm">{label}</Label>
       <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+function FileField({
+  label,
+  onChange,
+  accept = "image/*",
+}: {
+  label: string;
+  onChange: (value: string) => void;
+  accept?: string;
+}) {
+  return (
+    <div>
+      <Label className="mb-1.5 block text-sm">{label}</Label>
+      <Input
+        type="file"
+        accept={accept}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            onChange(URL.createObjectURL(file));
+          } else {
+            onChange("");
+          }
+        }}
+        className="cursor-pointer file:cursor-pointer"
+      />
     </div>
   );
 }
