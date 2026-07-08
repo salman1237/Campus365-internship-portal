@@ -303,8 +303,8 @@ function NDAPage() {
 
                     <h3>Signatures</h3>
                     
-                    <div className="mt-4 flex justify-between items-end">
-                      <div className="flex-1">
+                    <div className="mt-4">
+                      <div>
                         <p className="mb-4">
                           <strong>For the Company:</strong> By: {fields.signatoryImage ? (
                             <img src={fields.signatoryImage} alt="Signature" className="inline-block h-12 w-auto ml-2 align-bottom" />
@@ -327,7 +327,7 @@ function NDAPage() {
                       </div>
 
                       {/* Company Seal */}
-                      <div className="mr-8 mb-8 flex flex-col items-center justify-center">
+                      <div className="mt-8 flex flex-col items-start justify-center">
                         {fields.companySealImage && (
                           <img src={fields.companySealImage} alt="Company Seal" className="h-28 w-28 object-contain mix-blend-multiply opacity-90" />
                         )}
