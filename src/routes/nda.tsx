@@ -327,7 +327,7 @@ function NDAPage() {
                       </div>
 
                       {/* Company Seal */}
-                      <div className="mt-8 flex flex-col items-start justify-center">
+                      <div className="mt-8 flex flex-col items-center justify-center">
                         {fields.companySealImage && (
                           <img src={fields.companySealImage} alt="Company Seal" className="h-28 w-28 object-contain mix-blend-multiply opacity-90" />
                         )}
