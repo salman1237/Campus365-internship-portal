@@ -135,7 +135,7 @@ async function buildHeader(): Promise<Header> {
     borders: {
       top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE },
       left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE },
-      insideH: { style: BorderStyle.NONE }, insideV: { style: BorderStyle.NONE },
+      insideHorizontal: { style: BorderStyle.NONE }, insideVertical: { style: BorderStyle.NONE },
     },
   });
 
@@ -215,11 +215,11 @@ export async function generateAppointmentLetterDocx(fields: {
   function bS(text: string) { return new TextRun({ text, bold: true, size: 24 }); } // 12pt
   function tS(text: string) { return new TextRun({ text, size: 24 }); } // 12pt
 
-  function pS(children: TextRun[], align = AlignmentType.LEFT): Paragraph {
-    return new Paragraph({ 
-      children, 
-      alignment: align, 
-      style: "Normal(Web)" 
+  function pS(children: TextRun[], align: (typeof AlignmentType)[keyof typeof AlignmentType] = AlignmentType.LEFT): Paragraph {
+    return new Paragraph({
+      children,
+      alignment: align,
+      style: "Normal(Web)"
     });
   }
 
@@ -368,11 +368,12 @@ export async function generateNDADocx(fields: {
   date: string;
   internName: string;
   internAddress: string;
+  companySignatoryName: string;
   companySignatoryTitle: string;
 }): Promise<void> {
   const [header, footer] = await Promise.all([buildHeader(), buildFooter()]);
 
-  const F = FONT_SERIF; // NDA uses serif to match the on-screen format
+  const F = FONT_SANS; // NDA uses Calibri to match the on-screen format
   const fmtDate = fmt(fields.date, "[Date]");
 
   // Build day/month/year parts like the on-screen format
@@ -491,7 +492,7 @@ export async function generateNDADocx(fields: {
     // Signatures
     sectionHead("Signatures"),
     // Company signature row
-    pS([bS("For the Company:"), tS("  By: "), uField("", "", 35)]),
+    pS([bS("For the Company:"), tS("  By: "), uField("", "", 35), tS("  "), tS(fields.companySignatoryName && fields.companySignatoryName !== "[Signatory Name]" ? fields.companySignatoryName : "")]),
     new Paragraph({
       children: [
         tS("Title: "),
@@ -519,7 +520,7 @@ export async function generateNDADocx(fields: {
       default: {
         document: {
           run: {
-            font: "Times New Roman",
+            font: F,
             size: 24, // 12pt
           }
         }
@@ -531,7 +532,7 @@ export async function generateNDADocx(fields: {
           basedOn: "Normal",
           next: "Normal",
           run: {
-            font: "Times New Roman",
+            font: F,
             size: 24,
           },
           paragraph: {
@@ -555,7 +556,7 @@ export async function generateNDADocx(fields: {
           basedOn: "Normal",
           next: "Normal",
           run: {
-            font: "Times New Roman",
+            font: F,
             size: 36, // 18pt
             bold: true,
           },
@@ -570,7 +571,7 @@ export async function generateNDADocx(fields: {
           basedOn: "Normal",
           next: "Normal",
           run: {
-            font: "Times New Roman",
+            font: F,
             size: 24, // 12pt
             bold: true,
           },

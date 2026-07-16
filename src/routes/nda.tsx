@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, Navigate } from "@tanstack/react-router";
 import { Printer, RefreshCcw, FileText, FileDown } from "lucide-react";
 import { generateNDADocx } from "@/lib/generateDocx";
 
@@ -39,6 +39,7 @@ const initialState = {
   date: "",
   internName: "[Intern Name]",
   internAddress: "[Intern Address]",
+  companySignatoryName: "[Signatory Name]",
   companySignatoryTitle: "[Designation]",
   signatoryImage: "",
   companySealImage: "",
@@ -133,6 +134,7 @@ function NDAPage() {
           <Field label="Intern name" value={fields.internName} onChange={(v) => updateField("internName", v)} />
           <Field label="Intern address" value={fields.internAddress} onChange={(v) => updateField("internAddress", v)} />
           <Separator className="my-4" />
+          <Field label="Signatory name" value={fields.companySignatoryName} onChange={(v) => updateField("companySignatoryName", v)} />
           <Field label="Signatory title" value={fields.companySignatoryTitle} onChange={(v) => updateField("companySignatoryTitle", v)} />
           <FileField label="Upload Signatory Image" onChange={(v) => updateField("signatoryImage", v)} />
           <FileField label="Upload Company Seal" onChange={(v) => updateField("companySealImage", v)} />
@@ -166,7 +168,7 @@ function NDAPage() {
               }
             }
             .nda-text {
-              font-family: "Times New Roman", Times, serif;
+              font-family: "Calibri", "Segoe UI", sans-serif;
               text-align: justify;
               font-size: 0.95rem;
               line-height: 1.5;
@@ -311,6 +313,7 @@ function NDAPage() {
                           ) : (
                             <span className="signature-line"></span>
                           )}
+                          <span className="ml-4">{fields.companySignatoryName !== "[Signatory Name]" ? fields.companySignatoryName : ""}</span>
                         </p>
                         <p className="mb-8">
                           Title: <span className="signature-line">{fields.companySignatoryTitle !== "[Designation]" ? fields.companySignatoryTitle : ""}</span> 

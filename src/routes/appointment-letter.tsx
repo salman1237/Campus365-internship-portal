@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, Navigate } from "@tanstack/react-router";
 import { Printer, RefreshCcw, FileText, FileDown } from "lucide-react";
 import { generateAppointmentLetterDocx } from "@/lib/generateDocx";
 
