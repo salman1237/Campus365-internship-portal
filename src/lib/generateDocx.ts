@@ -492,7 +492,7 @@ export async function generateNDADocx(fields: {
     // Signatures
     sectionHead("Signatures"),
     // Company signature row
-    pS([bS("For the Company:"), tS("  By: "), uField("", "", 35), tS("  "), tS(fields.companySignatoryName && fields.companySignatoryName !== "[Signatory Name]" ? fields.companySignatoryName : "")]),
+    pS([bS("For the Company:"), tS("  By: "), uField("", "", 35), tS("  Name : "), tS(fields.companySignatoryName && fields.companySignatoryName !== "[Signatory Name]" ? fields.companySignatoryName : "")]),
     new Paragraph({
       children: [
         tS("Title: "),

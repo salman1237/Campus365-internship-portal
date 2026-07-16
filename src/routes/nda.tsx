@@ -313,7 +313,7 @@ function NDAPage() {
                           ) : (
                             <span className="signature-line"></span>
                           )}
-                          <span className="ml-4">{fields.companySignatoryName !== "[Signatory Name]" ? fields.companySignatoryName : ""}</span>
+                          <span className="ml-4">Name : {fields.companySignatoryName !== "[Signatory Name]" ? fields.companySignatoryName : ""}</span>
                         </p>
                         <p className="mb-8">
                           Title: <span className="signature-line">{fields.companySignatoryTitle !== "[Designation]" ? fields.companySignatoryTitle : ""}</span> 
